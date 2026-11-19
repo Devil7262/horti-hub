@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HortiHub - BSc & MSc Horticulture Study Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0fdf4; }
+    .notes-content h3 { font-size: 1.25rem; font-weight: 700; color: #166534; margin-top: 1rem; margin-bottom: 0.5rem; }
+    .notes-content p { margin-bottom: 0.75rem; line-height: 1.6; color: #1f2937; }
+    .notes-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+    .notes-content li { margin-bottom: 0.4rem; color: #374151; }
+    .notes-content strong { color: #14532d; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-green-800 text-white shadow-lg">
+    <div class="max-w-5xl mx-auto px-4 py-5 flex flex-col sm:flex-row justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold tracking-wide">🌿 HortiHub Study Portal</h1>
+        <p class="text-green-200 text-sm">BSc & MSc Horticulture Syllabus + AI Exam Notes</p>
+      </div>
+      <span class="mt-2 sm:mt-0 bg-green-700 text-xs px-3 py-1 rounded-full border border-green-500">
+        100% Free for All Students
+      </span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto px-4 py-8 flex-grow w-full space-y-8">
+
+    <!-- Section 1: One-Click Syllabus Finder -->
+    <section class="bg-white p-6 rounded-2xl shadow-md border border-green-100">
+      <h2 class="text-xl font-bold text-green-900 mb-1">📚 One-Click ICAR Syllabus Finder</h2>
+      <p class="text-sm text-gray-500 mb-4">Apna course aur department chunein aur turant syllabus dekhein ya download karein.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Course Level</label>
+          <select id="sylCourse" onchange="updateSubjects()" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 outline-none">
+            <option value="bsc">BSc (Hons.) Horticulture</option>
+            <option value="msc">MSc Horticulture (ICAR PG)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Department / Major</label>
+          <select id="sylSubject" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 outline-none">
+          </select>
+        </div>
+
+        <div class="flex items-end">
+          <button onclick="openSyllabus()" class="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-2.5 px-4 rounded-lg transition shadow">
+            View / Download Syllabus ↗
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: AI Notes Generator -->
+    <section class="bg-white p-6 rounded-2xl shadow-md border border-green-100">
+      <h2 class="text-xl font-bold text-green-900 mb-1">🤖 AI Horticulture Notes & PDF Maker</h2>
+      <p class="text-sm text-gray-500 mb-4">Kisi bhi topic ka naam likhein, AI exam-ready notes banayega jise aap PDF mein save kar sakte hain.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Course</label>
+          <select id="aiCourse" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 outline-none">
+            <option value="BSc Horticulture">BSc Horticulture</option>
+            <option value="MSc Horticulture">MSc Horticulture (JRF/SRF Level)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
+          <select id="aiSubject" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 outline-none">
+            <option value="Fruit Science (Pomology)">Fruit Science (Pomology)</option>
+            <option value="Vegetable Science (Olericulture)">Vegetable Science (Olericulture)</option>
+            <option value="Floriculture & Landscaping">Floriculture & Landscaping</option>
+            <option value="Post-Harvest Technology">Post-Harvest Technology</option>
+            <option value="Spices, Plantation & Medicinal Crops">Spices, Plantation & Medicinal Crops</option>
+            <option value="Plant Propagation & Nursery Management">Plant Propagation & Nursery Management</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Topic Name Likhein</label>
+        <input type="text" id="aiTopic" placeholder="Jaise: High Density Planting in Mango, Tissue Culture in Banana, Greenhouse Cultivation..."
+          class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 outline-none" />
+      </div>
+
+      <button id="generateBtn" onclick="generateNotes()" class="w-full sm:w-auto bg-green-700 hover:bg-green-800 text-white font-semibold py-3 px-6 rounded-lg transition shadow">
+        ✨ Generate Notes
+      </button>
+
+      <!-- Loading Indicator -->
+      <div id="loading" class="hidden mt-6 text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-green-600 border-t-transparent"></div>
+        <p class="text-green-800 font-medium mt-2">AI aapke liye detailed notes taiyar kar raha hai...</p>
+      </div>
+
+      <!-- Output Box -->
+      <div id="resultBox" class="hidden mt-6 border-t pt-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 bg-green-50 p-4 rounded-xl">
+          <div>
+            <h3 id="pdfTitle" class="font-bold text-green-900 text-lg">Topic Notes</h3>
+            <p id="pdfSubtitle" class="text-xs text-green-700">HortiHub Study Material</p>
+          </div>
+          <button onclick="downloadPDF()" class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded-lg shadow flex items-center gap-2">
+            📄 Save as PDF
+          </button>
+        </div>
+
+        <!-- Printable PDF Area -->
+        <div id="printableArea" class="p-6 bg-white border border-gray-200 rounded-xl notes-content">
+          <div id="notesOutput"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-green-900 text-green-200 text-center py-4 text-sm mt-12">
+    Made with ❤️ for Horticulture Students | Free Lifetime Access
+  </footer>
+
+  <script>
+    const syllabusData = {
+      bsc: [
+        { name: "ICAR 5th/6th Deans Complete BSc Horticulture Syllabus", url: "https://icar.org.in/sites/default/files/2023-02/5th-Deans-Committee-Report.pdf" },
+        { name: "Fruit Science (Pomology) - BSc Core", url: "https://www.google.com/search?q=ICAR+BSc+Horticulture+Fruit+Science+syllabus+pdf" },
+        { name: "Vegetable Science (Olericulture) - BSc Core", url: "https://www.google.com/search?q=ICAR+BSc+Horticulture+Vegetable+Science+syllabus+pdf" },
+        { name: "Floriculture & Landscape Architecture", url: "https://www.google.com/search?q=ICAR+BSc+Horticulture+Floriculture+syllabus+pdf" },
+        { name: "Post Harvest Management & Processing", url: "https://www.google.com/search?q=ICAR+BSc+Horticulture+Post+Harvest+Management+syllabus+pdf" }
+      ],
+      msc: [
+        { name: "ICAR MSc Horticulture Complete PG Syllabus (BSMA)", url: "https://icar.org.in/sites/default/files/2022-07/Horticulture.pdf" },
+        { name: "MSc Fruit Science (Pomology)", url: "https://www.google.com/search?q=ICAR+BSMA+MSc+Fruit+Science+syllabus+pdf" },
+        { name: "MSc Vegetable Science (Olericulture)", url: "https://www.google.com/search?q=ICAR+BSMA+MSc+Vegetable+Science+syllabus+pdf" },
+        { name: "MSc Floriculture & Landscaping", url: "https://www.google.com/search?q=ICAR+BSMA+MSc+Floriculture+syllabus+pdf" },
+        { name: "MSc Post Harvest Technology", url: "https://www.google.com/search?q=ICAR+BSMA+MSc+Post+Harvest+Technology+syllabus+pdf" }
+      ]
+    };
+
+    function updateSubjects() {
+      const course = document.getElementById("sylCourse").value;
+      const subjectSelect = document.getElementById("sylSubject");
+      subjectSelect.innerHTML = "";
+      syllabusData[course].forEach((item, index) => {
+        const opt = document.createElement("option");
+        opt.value = index;
+        opt.textContent = item.name;
+        subjectSelect.appendChild(opt);
+      });
+    }
+
+    function openSyllabus() {
+      const course = document.getElementById("sylCourse").value;
+      const index = document.getElementById("sylSubject").value;
+      const selected = syllabusData[course][index];
+      window.open(selected.url, "_blank");
+    }
+
+    async function generateNotes() {
+      const course = document.getElementById("aiCourse").value;
+      const subject = document.getElementById("aiSubject").value;
+      const topic = document.getElementById("aiTopic").value.trim();
+
+      if (!topic) {
+        alert("Kripya pehle koi topic likhein!");
+        return;
+      }
+
+      const btn = document.getElementById("generateBtn");
+      const loading = document.getElementById("loading");
+      const resultBox = document.getElementById("resultBox");
+
+      btn.disabled = true;
+      btn.classList.add("opacity-50");
+      loading.classList.remove("hidden");
+      resultBox.classList.add("hidden");
+
+      try {
+        const res = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ course, subject, topic })
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          alert(data.error);
+        } else {
+          document.getElementById("pdfTitle").textContent = topic;
+          document.getElementById("pdfSubtitle").textContent = `${course} | ${subject}`;
+          document.getElementById("notesOutput").innerHTML = `
+            <div style="border-bottom: 2px solid #166534; padding-bottom: 10px; margin-bottom: 15px;">
+              <h2 style="font-size: 20px; font-weight: bold; color: #14532d; margin: 0;">${topic}</h2>
+              <p style="font-size: 12px; color: #4b5563; margin: 4px 0 0 0;">Course: ${course} | Subject: ${subject} | Source: HortiHub</p>
+            </div>
+            ${data.notes}
+          `;
+          resultBox.classList.remove("hidden");
+        }
+      } catch (err) {
+        alert("Network error! Internet connection check karein.");
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove("opacity-50");
+        loading.classList.add("hidden");
+      }
+    }
+
+    function downloadPDF() {
+      const topic = document.getElementById("aiTopic").value.trim() || "Horticulture_Notes";
+      const element = document.getElementById("printableArea");
+      const opt = {
+        margin: 0.5,
+        filename: `${topic.replace(/[^a-z0-9]/gi, '_')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+
+    updateSubjects();
+  </script>
+</body>
+</html>
